@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salle Prof - Lycée Thiaroye</title>
+    <meta name="description" content="Générateur de devoirs et corrections pour les enseignants" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- POLICES OFFICIELLES & ÉLÉGANTES -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Libre+Baskerville:wght@400;700&family=Georgia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+
+        /* Police officielle des sujets sénégalais : Georgia + Times */
+        .sujet-content {
+            font-family: Georgia, "Times New Roman", Times, serif !important;
+            font-size: 17px;
+            line-height: 1.8;
+            color: #1a1a1a;
+        }
+        .sujet-content h1, .sujet-content h2, .sujet-content h3 {
+            font-family: "Libre Baskerville", Georgia, serif !important;
+            font-weight: 700;
+            color: #00853F;
+            margin-top: 1.8em;
+            margin-bottom: 0.8em;
+        }
+        .sujet-content h1 {
+            font-size: 2em;
+            text-align: center;
+            border-bottom: 3px double #00853F;
+            padding-bottom: 12px;
+        }
+        .sujet-content p {
+            text-align: justify;
+            margin-bottom: 1.2em;
+        }
+        .sujet-content ul, .sujet-content ol {
+            margin-left: 1.5em;
+            margin-bottom: 1.2em;
+        }
+
+        /* Correction : même police mais fond vert pâle */
+        .correction-content {
+            font-family: Georgia, "Times New Roman", Times, serif !important;
+            font-size: 16.5px;
+            line-height: 1.85;
+            background-color: #f0fdf4;
+            padding: 2rem;
+            border-radius: 1rem;
+            border-left: 8px solid #00853F;
+        }
+        .correction-content h3 {
+            font-family: "Libre Baskerville", Georgia, serif !important;
+            color: #006d35;
+            font-size: 1.6em;
+        }
+
+        /* KaTeX reste parfait avec ces polices */
+        .katex { font-size: 1.1em !important; }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 flex flex-col">
+
+    <!-- Header officiel Lycée Thiaroye -->
+    <header class="bg-green-700 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img src="https://raw.githubusercontent.com/rap2hpoutre/fast-excel/main/tests/logo_thiaroye.png" 
+                     alt="Lycée Thiaroye" class="h-14 -ml-2">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-wider">LYCÉE THIAROYE</h1>
+                    <p class="text-xs font-medium opacity-95 -mt-1">SALLE DES PROFS NUMÉRIQUE </p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <span class="flex items-center space-x-2 bg-green-600 px-5 py-2 rounded-full text-sm font-bold border border-green-500">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </span>
+                    Système Actif
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Bandeau jaune -->
+    <div class="bg-yellow-300 border-l-8 border-yellow-500 py-3 px-6 shadow-sm">
+        <div class="max-w-7xl mx-auto text-gray-800 text-sm font-medium">
+            Utilisez cet outil pour préparer vos devoirs, compositions et exercices. L’assistant respecte le programme officiel sénégalais.
+            Votre collégue Doro Cissé (Physique-Chimie) 
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+        {% if error %}
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+            <strong class="font-bold">Erreur : </strong>{{ error }}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+
+            <!-- Formulaire gauche (inchangé) -->
+            <div class="lg:col-span-1">
+                <!-- ... ton formulaire exactement comme avant ... -->
+                <!-- Je le remets pour que tu aies le fichier complet -->
+                <div class="bg-white rounded-2xl shadow-xl border-4 border-green-700 overflow-hidden">
+                    <div class="bg-green-700 text-white px-6 py-4 flex items-center">
+                        <div class="bg-red-600 p-3 rounded-lg mr-4">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Paramètres du Sujet</h3>
+                    </div>
+                    <div class="p-8">
+                        <form method="POST" class="space-y-6">
+                            <input type="hidden" name="action" value="generate_exam">
+                            <!-- tous tes champs inchangés -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Matière</label>
+                                    <select name="subject" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600" required>{% for sub in subjects %}<option>{{ sub }}</option>{% endfor %}</select></div>
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Niveau / Classe</label>
+                                    <select name="level" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600" required>{% for lvl in levels %}<option>{{ lvl }}</option>{% endfor %}</select></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Type d'évaluation</label>
+                                    <select name="type" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600" required>{% for typ in exam_types %}<option>{{ typ }}</option>{% endfor %}</select></div>
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Difficulté</label>
+                                    <select name="difficulty" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600" required>{% for diff in difficulties %}<option>{{ diff }}</option>{% endfor %}</select></div>
+                            </div>
+                            <div><label class="block text-sm font-semibold text-gray-700 mb-1">Chapitre / Thème précis</label>
+                                <input name="topic" type="text" placeholder="Ex: Les nombres complexes, La Guerre Froide..." class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600" required></div>
+                            <div><label class="block text-sm font-semibold text-gray-700 mb-1">Durée de l'épreuve</label>
+                                <input name="duration" type="text" placeholder="2 heures" class="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-2 focus:ring-green-600"></div>
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold text-lg py-4 rounded-lg uppercase tracking-wider shadow-lg transition transform hover:scale-105">
+                                Générer le sujet
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone de droite : sujet avec police officielle -->
+            <div class="lg:col-span-2">
+                {% if current_content %}
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                    <div class="bg-gradient-to-r from-green-700 to-green-800 text-white px-10 py-6">
+                        <h2 class="text-2.5xl font-bold text-center">{{ current_content.request.type }} de {{ current_content.request.subject | upper }}</h2>
+                        <p class="text-center mt-2 opacity-90">Lycée Thiaroye • Généré le {{ current_content.createdAt }}</p>
+                    </div>
+
+                    <div class="p-10 sujet-content">
+                        <div id="exam-content"></div>
+                    </div>
+
+                    {% if current_content.correctionContent %}
+                    <div class="correction-content mx-10 mb-10">
+                        <h3 class="text-2xl font-bold mb-6">Correction détaillée</h3>
+                        <div id="correction-content"></div>
+                    </div>
+                    {% else %}
+                    <div class="px-10 pb-10">
+                        <form method="POST">
+                            <input type="hidden" name="action" value="generate_correction">
+                            <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-xl py-5 rounded-xl uppercase tracking-wider shadow-xl transition transform hover:scale-105">
+                                Générer la correction détaillée
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    <div class="px-10 pb-8 flex justify-end space-x-4">
+                        <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-lg font-bold">Télécharger PDF</button>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold">Copier</button>
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="bg-white rounded-2xl shadow-xl border-2 border-dashed border-gray-300 min-h-96 flex flex-col items-center justify-center p-16 text-center">
+                    <svg class="w-28 h-28 text-gray-200 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-2xl font-bold text-gray-500">Aucun sujet généré</p>
+                    <p class="text-gray-400 mt-3 text-lg">Remplissez le formulaire à gauche pour créer votre première évaluation.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+    <script>
+        function renderContent(id, content) {
+            const el = document.getElementById(id);
+            if (el && content) {
+                el.innerHTML = marked.parse(content);
+                renderMathInElement(el, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false},
+                        {left: "\\[", right: "\\]", display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            {% if current_content %}
+            renderContent('exam-content', {{ current_content.examContent | tojson | safe }});
+            {% if current_content.correctionContent %}
+            renderContent('correction-content', {{ current_content.correctionContent | tojson | safe }});
+            {% endif %}
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
